@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Edeluxe Livraison</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --ink: #15130E;
+    --ink-2: #1D1A13;
+    --cream: #F4EEE1;
+    --stone: #9C9686;
+    --blue: #5B84D9;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--ink);
+  }
+
+  body {
+    font-family: 'Manrope', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: 24px;
+  }
+
+  .screen {
+    width: 100%;
+    max-width: 360px;
+    padding: 48px 26px 32px;
+    position: relative;
+  }
+
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15vh;
+    opacity: 0;
+    animation: riseIn 0.6s ease-out 0.05s forwards;
+  }
+
+  .eyebrow .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--blue);
+    display: inline-block;
+  }
+
+  .eyebrow span {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    color: var(--stone);
+  }
+
+  .brand {
+    text-align: center;
+    margin-bottom: 18px;
+    position: relative;
+  }
+
+  .brand .wordmark {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 52px;
+    line-height: 1;
+    color: var(--cream);
+  }
+
+  .seal {
+    position: absolute;
+    right: -4px;
+    top: 30px;
+    width: 92px;
+    height: 92px;
+    opacity: 0;
+    animation: sealDrop 0.9s cubic-bezier(.2,.8,.3,1) 0.15s forwards;
+  }
+
+  .tagline {
+    text-align: center;
+    font-size: 14px;
+    color: var(--stone);
+    line-height: 1.6;
+    margin: 0 auto 44px;
+    max-width: 260px;
+    opacity: 0;
+    animation: riseIn 0.6s ease-out 0.05s forwards;
+  }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    height: 52px;
+    border-radius: 10px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    opacity: 0;
+    animation: riseIn 0.6s ease-out 0.85s forwards;
+  }
+
+  .btn-primary {
+    background: transparent;
+    border: 1px solid var(--blue);
+    color: var(--cream);
+    margin-bottom: 16px;
+    transition: background 0.15s ease;
+  }
+
+  .btn-primary:hover { background: rgba(91,132,217,0.1); }
+  .btn-primary:active { transform: scale(0.98); }
+
+  .btn-primary svg { width: 16px; height: 16px; }
+
+  .link-row {
+    text-align: center;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: riseIn 0.6s ease-out 0.85s forwards;
+  }
+
+  .link-row a {
+    font-size: 13px;
+    color: var(--stone);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .trust {
+    border-top: 0.5px solid rgba(244,238,225,0.14);
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    opacity: 0;
+    animation: riseIn 0.6s ease-out 1.0s forwards;
+  }
+
+  .trust-item {
+    flex: 1;
+    text-align: center;
+  }
+
+  .trust-item svg {
+    width: 18px;
+    height: 18px;
+    color: var(--blue);
+  }
+
+  .trust-item p {
+    font-size: 10.5px;
+    color: var(--stone);
+    margin-top: 6px;
+    line-height: 1.3;
+  }
+
+  @keyframes riseIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes sealDrop {
+    0%   { transform: scale(1.9) rotate(-14deg); opacity: 0; }
+    65%  { transform: scale(0.92) rotate(3deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .eyebrow, .tagline, .link-row, .trust, .btn-primary { animation: none; opacity: 1; }
+    .seal { animation: none; opacity: 1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="screen">
+
+  <div class="eyebrow">
+    <span class="dot"></span>
+    <span>livraison</span>
+  </div>
+
+  <div class="brand">
+    <div class="wordmark">Edeluxe</div>
+    <svg class="seal" viewBox="0 0 86 86" role="img" aria-label="Sceau confirmant la réception">
+      <circle cx="43" cy="43" r="40" fill="#5B84D9"/>
+      <circle cx="43" cy="43" r="34" fill="none" stroke="#15130E" stroke-width="0.75" stroke-dasharray="2 3"/>
+      <text x="43" y="53" text-anchor="middle" font-family="Fraunces, serif" font-weight="600" font-size="30" fill="#15130E">E</text>
+    </svg>
+  </div>
+
+  <p class="tagline">Votre colis confirmé en un instant, directement depuis votre téléphone.</p>
+
+  <a href="scan.html" class="btn btn-primary">
+    Suivre ma livraison
+    <svg viewBox="0 0 24 24" fill="none" stroke="#5B84D9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+  </a>
+
+  <div class="link-row">
+    <a href="scan.html">Scanner un bordereau</a>
+  </div>
+
+  <div class="trust">
+    <div class="trust-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v6h-6"/></svg>
+      <p>Signature<br>électronique</p>
+    </div>
+    <div class="trust-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+      <p>Paiement<br>sécurisé</p>
+    </div>
+    <div class="trust-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v9a2 2 0 002 2h10a2 2 0 002-2V9"/><line x1="10" y1="13" x2="14" y2="13"/></svg>
+      <p>Bordereau<br>archivé</p>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
