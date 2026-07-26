@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Archive — Edeluxe Livraison</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --ink: #15130E; --ink-2: #1D1A13; --cream: #F4EEE1; --stone: #9C9686; --blue: #5B84D9;
+  }
+  html, body { min-height: 100%; background: var(--ink); }
+  body { font-family: 'Manrope', sans-serif; display: flex; justify-content: center; padding: 32px 20px 60px; }
+  .wrap { width: 100%; max-width: 480px; }
+
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; color: var(--stone);
+    display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+  }
+  .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); }
+
+  h1 { font-family: 'Fraunces', serif; font-weight: 600; font-size: 26px; color: var(--cream); margin-bottom: 24px; }
+
+  .stat-row { display: flex; gap: 10px; margin-bottom: 22px; }
+  .stat {
+    flex: 1; background: var(--ink-2); border-radius: 12px; padding: 14px 16px;
+  }
+  .stat .num { font-family: 'IBM Plex Mono', monospace; font-size: 20px; color: var(--blue); margin-bottom: 2px; }
+  .stat .lbl { font-size: 11.5px; color: var(--stone); }
+
+  #status { font-size: 13px; color: var(--stone); margin-bottom: 16px; }
+
+  .card {
+    background: var(--ink-2); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px;
+  }
+  .card .top-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .card .bordereau { font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: var(--cream); }
+  .card .montant { font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: var(--blue); }
+  .card .bottom-row { display: flex; justify-content: space-between; }
+  .card .client { font-size: 12.5px; color: var(--stone); }
+  .card .date { font-size: 11.5px; color: var(--stone); }
+
+  .empty { text-align: center; color: var(--stone); font-size: 13px; padding: 40px 0; }
+  .refresh-btn {
+    width: 100%; height: 44px; margin-top: 18px; background: transparent; border: 1px solid rgba(244,238,225,0.2);
+    border-radius: 10px; color: var(--cream); font-family: 'Manrope', sans-serif; font-size: 13px; cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow"><span class="dot"></span><span>archive</span></div>
+  <h1>Bordereaux confirmés</h1>
+
+  <div class="stat-row">
+    <div class="stat">
+      <div class="num" id="totalCount">—</div>
+      <div class="lbl">livraisons confirmées</div>
+    </div>
+    <div class="stat">
+      <div class="num" id="totalMontant">—</div>
+      <div class="lbl">total encaissé</div>
+    </div>
+  </div>
+
+  <div id="status">Chargement…</div>
+  <div id="list"></div>
+
+  <button class="refresh-btn" onclick="load()">Actualiser</button>
+
+</div>
+
+<script>
+  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby9oUJM-2a4RpHHh4ryzW-NS7guStHnFlM4liWPtg-TYlOi85UKIqqwqWIWnSVjxyP_ew/exec';
+
+  function load() {
+    document.getElementById('status').textContent = 'Chargement…';
+    fetch(APPS_SCRIPT_URL)
+      .then(function (res) { return res.json(); })
+      .then(function (data) { render(data); })
+      .catch(function () {
+        document.getElementById('status').textContent = 'Impossible de charger l\'archive pour le moment.';
+      });
+  }
+
+  function render(data) {
+    var list = document.getElementById('list');
+    var status = document.getElementById('status');
+    list.innerHTML = '';
+
+    if (!data.length) {
+      status.textContent = '';
+      list.innerHTML = '<div class="empty">Aucun bordereau confirmé pour l\'instant.</div>';
+      document.getElementById('totalCount').textContent = '0';
+      document.getElementById('totalMontant').textContent = '0 F';
+      return;
+    }
+
+    status.textContent = data.length + ' résultat(s)';
+
+    var total = 0;
+    data.forEach(function (item) {
+      var montantNum = Number(item.montant) || 0;
+      total += montantNum;
+
+      var dateStr = '';
+      try {
+        var d = new Date(item.date);
+        dateStr = d.toLocaleDateString('fr-FR') + ' à ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+      } catch (e) { dateStr = item.date; }
+
+      var card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML =
+        '<div class="top-row">' +
+          '<span class="bordereau">' + item.bordereau + '</span>' +
+          '<span class="montant">' + montantNum.toLocaleString('fr-FR') + ' F</span>' +
+        '</div>' +
+        '<div class="bottom-row">' +
+          '<span class="client">' + (item.client || 'Client non renseigné') + '</span>' +
+          '<span class="date">' + dateStr + '</span>' +
+        '</div>';
+      list.appendChild(card);
+    });
+
+    document.getElementById('totalCount').textContent = data.length;
+    document.getElementById('totalMontant').textContent = total.toLocaleString('fr-FR') + ' F';
+  }
+
+  load();
+</script>
+</body>
+</html>
