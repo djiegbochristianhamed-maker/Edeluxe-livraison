@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Signature — Edeluxe Livraison</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --ink: #15130E;
+    --ink-2: #1D1A13;
+    --cream: #F4EEE1;
+    --stone: #9C9686;
+    --blue: #5B84D9;
+    --paper: #F4EEE1;
+  }
+
+  html, body { height: 100%; background: var(--ink); }
+
+  body {
+    font-family: 'Manrope', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: 24px;
+  }
+
+  .screen { width: 100%; max-width: 360px; padding: 24px 8px 8px; }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+
+  .icon-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 0.5px solid rgba(244,238,225,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    text-decoration: none;
+  }
+
+  .icon-btn svg { width: 16px; height: 16px; stroke: var(--cream); }
+
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    color: var(--stone);
+  }
+
+  .instruction {
+    font-size: 14px;
+    color: var(--stone);
+    line-height: 1.6;
+    margin: 0 0 18px;
+  }
+
+  .pad-wrap {
+    background: var(--paper);
+    border-radius: 14px;
+    border: 1px dashed rgba(21,19,14,0.3);
+    position: relative;
+    margin-bottom: 14px;
+  }
+
+  #sigCanvas {
+    display: block;
+    width: 100%;
+    height: 200px;
+    border-radius: 14px;
+    touch-action: none;
+  }
+
+  #sigHint {
+    position: absolute;
+    left: 0; right: 0; top: 50%;
+    transform: translateY(-50%);
+    text-align: center;
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+    color: rgba(21,19,14,0.35);
+    pointer-events: none;
+  }
+
+  .actions-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 24px;
+  }
+
+  .erase-link {
+    background: none;
+    border: none;
+    font-family: 'Manrope', sans-serif;
+    font-size: 13px;
+    color: var(--stone);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .erase-link svg { width: 15px; height: 15px; }
+
+  .validate-btn {
+    width: 100%;
+    height: 50px;
+    background: transparent;
+    border: 1px solid rgba(244,238,225,0.25);
+    border-radius: 10px;
+    color: var(--stone);
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+    pointer-events: none;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .validate-btn.ready { border-color: var(--blue); color: var(--cream); pointer-events: auto; }
+  .validate-btn svg { width: 16px; height: 16px; }
+</style>
+</head>
+<body>
+
+<div class="screen">
+
+  <div class="topbar">
+    <a href="formulaire.html" class="icon-btn" aria-label="Retour au formulaire">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    </a>
+    <span class="eyebrow">signature</span>
+  </div>
+
+  <p class="instruction">Signez avec le doigt pour confirmer la réception du bordereau <span id="bordereauOut">EDX-04521</span>.</p>
+
+  <div class="pad-wrap">
+    <canvas id="sigCanvas" width="256" height="200"></canvas>
+    <div id="sigHint">Signez ici</div>
+  </div>
+
+  <div class="actions-row">
+    <button type="button" class="erase-link" onclick="clearSig()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20H8l-6-6a2 2 0 010-2.8l9-9a2 2 0 012.8 0l6 6a2 2 0 010 2.8L12 20"/><path d="M14 6l6 6"/></svg>
+      Effacer
+    </button>
+  </div>
+
+  <button type="button" class="validate-btn" id="validateBtn" onclick="validateAndSend()">
+    Valider et envoyer sur WhatsApp
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+  </button>
+
+</div>
+
+<script>
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    var client = params.get('client');
+    var bordereau = params.get('bordereau') || 'EDX-04521';
+    var montant = params.get('montant') || '12500';
+    document.getElementById('bordereauOut').textContent = bordereau;
+
+    // Numéro WhatsApp Business qui reçoit les confirmations (format international, sans + ni espaces)
+    var NUMERO_WHATSAPP = '225707470833'; // Numéro temporaire de test — à remettre sur 0100385730 une fois le H10 S actif
+
+    window.validateAndSend = function () {
+      var message = 'Bonjour, je confirme la réception et le paiement de ma commande.\n'
+        + 'Bordereau : ' + bordereau + '\n'
+        + 'Montant : ' + Number(montant).toLocaleString('fr-FR') + ' F'
+        + (client ? '\nClient : ' + client : '');
+
+      var waLink = 'https://wa.me/' + NUMERO_WHATSAPP + '?text=' + encodeURIComponent(message);
+      window.open(waLink, '_blank');
+
+      var forward = new URLSearchParams();
+      if (client) forward.set('client', client);
+      forward.set('bordereau', bordereau);
+      forward.set('montant', montant);
+      window.location.href = 'confirmation.html?' + forward.toString();
+    };
+
+    var canvas = document.getElementById('sigCanvas');
+    var ctx = canvas.getContext('2d');
+    var hint = document.getElementById('sigHint');
+    var btn = document.getElementById('validateBtn');
+    var drawing = false;
+
+    function pos(e) {
+      var r = canvas.getBoundingClientRect();
+      var sx = canvas.width / r.width, sy = canvas.height / r.height;
+      return { x: (e.clientX - r.left) * sx, y: (e.clientY - r.top) * sy };
+    }
+
+    function start(e) {
+      drawing = true;
+      hint.style.display = 'none';
+      var p = pos(e);
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      btn.classList.add('ready');
+    }
+
+    function move(e) {
+      if (!drawing) return;
+      var p = pos(e);
+      ctx.strokeStyle = '#15130E';
+      ctx.lineWidth = 2.4;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+    }
+
+    function end() { drawing = false; }
+
+    canvas.addEventListener('pointerdown', start);
+    canvas.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', end);
+
+    window.clearSig = function () {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      hint.style.display = 'block';
+      btn.classList.remove('ready');
+    };
+  })();
+</script>
+
+</body>
+</html>
