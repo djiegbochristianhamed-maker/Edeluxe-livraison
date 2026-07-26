@@ -150,7 +150,7 @@
     <span class="eyebrow">signature</span>
   </div>
 
-  <p class="instruction">Signez avec le doigt pour confirmer la réception du bordereau EDX-04521.</p>
+  <p class="instruction">Signez avec le doigt pour confirmer la réception du bordereau <span id="bordereauOut">EDX-04521</span>.</p>
 
   <div class="pad-wrap">
     <canvas id="sigCanvas" width="256" height="200"></canvas>
@@ -164,15 +164,40 @@
     </button>
   </div>
 
-  <a href="confirmation.html" class="validate-btn" id="validateBtn">
-    Valider et confirmer
+  <button type="button" class="validate-btn" id="validateBtn" onclick="validateAndSend()">
+    Valider et envoyer sur WhatsApp
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-  </a>
+  </button>
 
 </div>
 
 <script>
   (function () {
+    var params = new URLSearchParams(window.location.search);
+    var client = params.get('client');
+    var bordereau = params.get('bordereau') || 'EDX-04521';
+    var montant = params.get('montant') || '12500';
+    document.getElementById('bordereauOut').textContent = bordereau;
+
+    // Numéro WhatsApp Business qui reçoit les confirmations (format international, sans + ni espaces)
+    var NUMERO_WHATSAPP = '225100385730'; // Wave Business EDELUXE — 0100385730
+
+    window.validateAndSend = function () {
+      var message = 'Bonjour, je confirme la réception et le paiement de ma commande.\n'
+        + 'Bordereau : ' + bordereau + '\n'
+        + 'Montant : ' + Number(montant).toLocaleString('fr-FR') + ' F'
+        + (client ? '\nClient : ' + client : '');
+
+      var waLink = 'https://wa.me/' + NUMERO_WHATSAPP + '?text=' + encodeURIComponent(message);
+      window.open(waLink, '_blank');
+
+      var forward = new URLSearchParams();
+      if (client) forward.set('client', client);
+      forward.set('bordereau', bordereau);
+      forward.set('montant', montant);
+      window.location.href = 'confirmation.html?' + forward.toString();
+    };
+
     var canvas = document.getElementById('sigCanvas');
     var ctx = canvas.getContext('2d');
     var hint = document.getElementById('sigHint');

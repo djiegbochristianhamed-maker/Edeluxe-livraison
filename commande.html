@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Votre commande — Edeluxe Livraison</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --ink: #15130E; --ink-2: #1D1A13; --cream: #F4EEE1; --stone: #9C9686; --blue: #5B84D9;
+  }
+  html, body { height: 100%; background: var(--ink); }
+  body {
+    font-family: 'Manrope', sans-serif; display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; min-height: 100dvh; padding: 24px;
+  }
+  .screen { width: 100%; max-width: 360px; padding: 24px 8px 8px; }
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; color: var(--stone);
+    display: flex; align-items: center; gap: 8px; margin-bottom: 20px;
+  }
+  .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); }
+
+  .photo-wrap {
+    width: 100%; height: 220px; border-radius: 14px; background: var(--ink-2); overflow: hidden;
+    display: flex; align-items: center; justify-content: center; margin-bottom: 20px;
+  }
+  .photo-wrap img { width: 100%; height: 100%; object-fit: cover; }
+  .photo-wrap svg { width: 40px; height: 40px; stroke: var(--stone); }
+
+  .client-name {
+    font-family: 'Fraunces', serif; font-weight: 600; font-size: 20px; color: var(--cream); margin-bottom: 4px;
+  }
+  .subtitle { font-size: 13px; color: var(--stone); margin-bottom: 22px; }
+
+  .details {
+    background: var(--ink-2); border-radius: 14px; padding: 16px 18px; margin-bottom: 20px;
+  }
+  .details .row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 0.5px solid rgba(244,238,225,0.1); }
+  .details .row:last-child { border-bottom: none; }
+  .details .label { font-size: 13px; color: var(--stone); }
+  .details .value { font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: var(--cream); }
+  .details .value.amount { color: var(--blue); }
+
+  .wave-btn {
+    width: 100%; height: 52px; background: var(--blue); border-radius: 10px; color: var(--ink);
+    font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 600; text-decoration: none;
+    display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px;
+  }
+  .wave-btn svg { width: 16px; height: 16px; }
+
+  .wave-note {
+    font-size: 12px; color: var(--stone); text-align: center; margin-bottom: 30px; line-height: 1.6; padding: 0 8px;
+  }
+
+  .confirm-btn {
+    width: 100%; height: 50px; background: transparent; border: 1px solid rgba(244,238,225,0.25);
+    border-radius: 10px; color: var(--cream); font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 500;
+    text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="screen">
+
+  <div class="eyebrow"><span class="dot"></span><span>votre commande</span></div>
+
+  <div class="photo-wrap" id="photoWrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>
+  </div>
+
+  <div class="client-name" id="clientName">Votre commande</div>
+  <div class="subtitle">Livraison prévue prochainement</div>
+
+  <div class="details">
+    <div class="row"><span class="label">Bordereau</span><span class="value" id="bordereauOut">—</span></div>
+    <div class="row"><span class="label">Montant</span><span class="value amount" id="montantOut">—</span></div>
+  </div>
+
+  <a href="#" id="waveBtn" class="wave-btn" style="display:none;" target="_blank" rel="noopener">
+    Payer via Wave
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+  </a>
+  <p class="wave-note">Le paiement se fait à la livraison, quand le livreur vous présente le QR Wave. Vous pouvez aussi payer dès maintenant avec le bouton ci-dessus.</p>
+
+  <a href="formulaire.html" id="confirmBtn" class="confirm-btn">
+    Confirmer la réception à la livraison
+  </a>
+
+</div>
+
+<script>
+  var params = new URLSearchParams(window.location.search);
+  var client = params.get('client');
+  var bordereau = params.get('bordereau') || 'EDX-04521';
+  var montant = params.get('montant') || '12500';
+  var wave = params.get('wave');
+  var photo = params.get('photo');
+
+  if (client) document.getElementById('clientName').textContent = 'Commande de ' + client;
+  document.getElementById('bordereauOut').textContent = bordereau;
+  document.getElementById('montantOut').textContent = Number(montant).toLocaleString('fr-FR') + ' F';
+
+  if (photo) {
+    document.getElementById('photoWrap').innerHTML = '<img src="' + photo + '" alt="Photo du produit commandé">';
+  }
+
+  if (wave) {
+    var waveBtn = document.getElementById('waveBtn');
+    waveBtn.href = wave;
+    waveBtn.style.display = 'flex';
+  }
+
+  var forward = new URLSearchParams();
+  if (client) forward.set('client', client);
+  forward.set('bordereau', bordereau);
+  forward.set('montant', montant);
+  document.getElementById('confirmBtn').href = 'formulaire.html?' + forward.toString();
+</script>
+
+</body>
+</html>

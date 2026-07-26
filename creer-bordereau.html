@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Créer un bordereau — Edeluxe Livraison</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --ink: #15130E; --ink-2: #1D1A13; --cream: #F4EEE1; --stone: #9C9686; --blue: #5B84D9;
+  }
+  html, body { min-height: 100%; background: var(--ink); }
+  body { font-family: 'Manrope', sans-serif; display: flex; justify-content: center; padding: 32px 24px 60px; }
+  .wrap { width: 100%; max-width: 400px; }
+  .eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.14em; color: var(--stone); margin-bottom: 6px; }
+  h1 { font-family: 'Fraunces', serif; font-weight: 600; font-size: 26px; color: var(--cream); margin-bottom: 28px; }
+  label { display: block; font-size: 13px; color: var(--stone); margin-bottom: 6px; margin-top: 18px; }
+  input {
+    width: 100%; height: 46px; background: var(--ink-2); border: 1px solid rgba(244,238,225,0.15);
+    border-radius: 10px; padding: 0 14px; color: var(--cream); font-family: 'Manrope', sans-serif; font-size: 14px;
+  }
+  input:focus { outline: none; border-color: var(--blue); }
+  input::placeholder { color: rgba(156,150,134,0.6); }
+  button {
+    margin-top: 28px; width: 100%; height: 50px; background: transparent; border: 1px solid var(--blue);
+    border-radius: 10px; color: var(--cream); font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer;
+  }
+  button:hover { background: rgba(91,132,217,0.1); }
+  #result { margin-top: 26px; display: none; }
+  #result .box { background: var(--ink-2); border-radius: 12px; padding: 16px; }
+  #result .box p { font-size: 12px; color: var(--stone); margin-bottom: 8px; }
+  #linkOut {
+    width: 100%; background: var(--ink); border: 1px solid rgba(244,238,225,0.15); border-radius: 8px;
+    padding: 10px 12px; color: var(--blue); font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+    word-break: break-all; margin-bottom: 10px; white-space: normal;
+  }
+  #copyBtn {
+    margin-top: 0; height: 42px; border-color: rgba(244,238,225,0.25); color: var(--cream); font-size: 13px;
+  }
+  #copyBtn.copied { border-color: var(--blue); }
+  .note { font-size: 12px; color: var(--stone); margin-top: 10px; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">outil interne</div>
+  <h1>Créer un bordereau</h1>
+
+  <label for="client">Nom du client</label>
+  <input id="client" type="text" placeholder="Ex : Aïcha Koné">
+
+  <label for="bordereau">Numéro de bordereau</label>
+  <input id="bordereau" type="text" placeholder="Ex : EDX-04521">
+
+  <label for="montant">Montant (FCFA)</label>
+  <input id="montant" type="number" placeholder="Ex : 12500">
+
+  <label for="wave">Lien de paiement Wave (collez-le depuis l'appli Wave Business)</label>
+  <input id="wave" type="url" placeholder="https://pay.wave.com/...">
+
+  <label for="photo">Lien de la photo du produit (optionnel)</label>
+  <input id="photo" type="url" placeholder="https://...">
+
+  <button onclick="generate()">Générer le lien du bordereau</button>
+
+  <div id="result">
+    <div class="box">
+      <p>Lien à copier et envoyer sur WhatsApp :</p>
+      <div id="linkOut"></div>
+      <button id="copyBtn" onclick="copyLink()">Copier le lien</button>
+    </div>
+    <p class="note">Envoyez ce lien au client, accompagné de la photo du produit si vous voulez qu'elle soit visible aussi dans WhatsApp.</p>
+  </div>
+</div>
+
+<script>
+  var generatedLink = '';
+  function generate() {
+    var client = document.getElementById('client').value.trim();
+    var bordereau = document.getElementById('bordereau').value.trim();
+    var montant = document.getElementById('montant').value.trim();
+    var wave = document.getElementById('wave').value.trim();
+    var photo = document.getElementById('photo').value.trim();
+
+    if (!bordereau || !montant) {
+      alert('Merci de renseigner au minimum le numéro de bordereau et le montant.');
+      return;
+    }
+
+    var base = window.location.href.replace('creer-bordereau.html', 'commande.html');
+    var params = new URLSearchParams();
+    if (client) params.set('client', client);
+    params.set('bordereau', bordereau);
+    params.set('montant', montant);
+    if (wave) params.set('wave', wave);
+    if (photo) params.set('photo', photo);
+
+    generatedLink = base + '?' + params.toString();
+    document.getElementById('linkOut').textContent = generatedLink;
+    document.getElementById('result').style.display = 'block';
+  }
+
+  function copyLink() {
+    if (!generatedLink) return;
+    navigator.clipboard.writeText(generatedLink).then(function () {
+      var btn = document.getElementById('copyBtn');
+      btn.textContent = 'Lien copié ✓';
+      btn.classList.add('copied');
+      setTimeout(function () { btn.textContent = 'Copier le lien'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+</script>
+</body>
+</html>

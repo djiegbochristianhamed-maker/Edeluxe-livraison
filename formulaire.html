@@ -178,18 +178,18 @@
   <div class="summary">
     <div>
       <div class="label">Bordereau</div>
-      <div class="value">EDX-04521</div>
+      <div class="value" id="bordereauOut">EDX-04521</div>
     </div>
     <div class="right">
       <div class="label">Montant</div>
-      <div class="value amount">12 500 F</div>
+      <div class="value amount" id="montantOut">12 500 F</div>
     </div>
   </div>
 
   <p class="hint">Cochez pour confirmer, sans rien écrire.</p>
 
   <div class="checklist" id="checklist">
-    <button type="button" class="check-row checked" onclick="toggleCheck(this)">
+    <button type="button" class="check-row" onclick="toggleCheck(this)">
       <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
       <span class="check-label">Colis reçu au complet</span>
     </button>
@@ -201,6 +201,10 @@
       <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
       <span class="check-label">Commande confirmée</span>
     </button>
+    <button type="button" class="check-row" onclick="toggleCheck(this)">
+      <span class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+      <span class="check-label">Paiement effectué (Wave)</span>
+    </button>
   </div>
 
   <a href="signature.html" class="continue-btn" id="continueBtn">
@@ -211,6 +215,19 @@
 </div>
 
 <script>
+  var params = new URLSearchParams(window.location.search);
+  var client = params.get('client');
+  var bordereau = params.get('bordereau') || 'EDX-04521';
+  var montant = params.get('montant') || '12500';
+  document.getElementById('bordereauOut').textContent = bordereau;
+  document.getElementById('montantOut').textContent = Number(montant).toLocaleString('fr-FR') + ' F';
+
+  var forward = new URLSearchParams();
+  if (client) forward.set('client', client);
+  forward.set('bordereau', bordereau);
+  forward.set('montant', montant);
+  document.getElementById('continueBtn').href = 'signature.html?' + forward.toString();
+
   function toggleCheck(row) {
     row.classList.toggle('checked');
     var rows = document.querySelectorAll('#checklist .check-row');

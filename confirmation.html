@@ -165,11 +165,11 @@
   <div class="details">
     <div class="row">
       <span class="label">Bordereau</span>
-      <span class="value">EDX-04521</span>
+      <span class="value" id="bordereauOut">EDX-04521</span>
     </div>
     <div class="row">
       <span class="label">Montant reçu</span>
-      <span class="value amount">12 500 F</span>
+      <span class="value amount" id="montantOut">12 500 F</span>
     </div>
     <div class="row">
       <span class="label">Heure</span>
@@ -180,7 +180,7 @@
   <div class="status-row">
     <div class="status-item">
       <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"><path d="M17 2l4 4-14 14H3v-4L17 2z"/><path d="M12.5 6.5l5 5"/></svg>
-      <p>Envoyé au client</p>
+      <p>Envoyé par WhatsApp</p>
     </div>
     <div class="status-item">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v9a2 2 0 002 2h10a2 2 0 002-2V9"/><line x1="10" y1="13" x2="14" y2="13"/></svg>
@@ -193,6 +193,12 @@
 </div>
 
 <script>
+  var params = new URLSearchParams(window.location.search);
+  var bordereau = params.get('bordereau') || 'EDX-04521';
+  var montant = params.get('montant') || '12500';
+  document.getElementById('bordereauOut').textContent = bordereau;
+  document.getElementById('montantOut').textContent = Number(montant).toLocaleString('fr-FR') + ' F';
+
   var now = new Date();
   var h = String(now.getHours()).padStart(2, '0');
   var m = String(now.getMinutes()).padStart(2, '0');
