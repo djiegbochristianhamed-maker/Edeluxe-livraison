@@ -42,6 +42,24 @@
   }
   #copyBtn.copied { border-color: var(--blue); }
   .note { font-size: 12px; color: var(--stone); margin-top: 10px; line-height: 1.6; }
+
+  .photo-btn {
+    margin-top: 6px; width: 100%; height: 46px; background: var(--ink-2);
+    border: 1px dashed rgba(244,238,225,0.25); border-radius: 10px;
+    color: var(--cream); font-family: 'Manrope', sans-serif; font-size: 13px;
+    display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer;
+  }
+  .photo-btn:hover { border-color: var(--blue); }
+  #photoPreviewWrap { margin-top: 10px; display: none; position: relative; }
+  #photoPreviewWrap img {
+    width: 100%; max-height: 220px; object-fit: cover; border-radius: 10px;
+    border: 1px solid rgba(244,238,225,0.15);
+  }
+  #photoRetake {
+    margin-top: 8px; height: 38px; font-size: 12.5px;
+    border-color: rgba(244,238,225,0.25); color: var(--stone);
+  }
+  #photoStatus { font-size: 11.5px; color: var(--stone); margin-top: 6px; }
 </style>
 </head>
 <body>
@@ -61,9 +79,14 @@
   <label for="wave">Lien de paiement Wave (généré automatiquement — modifiable si besoin)</label>
   <input id="wave" type="url" placeholder="https://pay.wave.com/...">
 
-  <label for="photo">Lien de la photo du produit (optionnel)</label>
-  <input id="photo" type="url" placeholder="https://...">
-
+  <label for="photo">Photo du produit (optionnel)</label>
+  <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none">
+  <div class="photo-btn" onclick="document.getElementById('photoInput').click()">📷 Prendre ou choisir une photo</div>
+  <div id="photoPreviewWrap">
+    <img id="photoPreviewImg" alt="Aperçu de la photo">
+    <button type="button" id="photoRetake" onclick="document.getElementById('photoInput').click()">🔄 Reprendre une photo</button>
+    <div id="photoStatus"></div>
+  </div>
   <button onclick="generate()">Générer le lien du bordereau</button>
 
   <div id="result">
@@ -72,7 +95,7 @@
       <div id="linkOut"></div>
       <button id="copyBtn" onclick="copyLink()">Copier le lien</button>
     </div>
-    <p class="note">Envoyez ce lien au client, accompagné de la photo du produit si vous voulez qu'elle soit visible aussi dans WhatsApp.</p>
+    <p class="note">Envoyez ce lien au client sur WhatsApp — la photo (si ajoutée) s'affichera directement dans son bordereau dès qu'elle ouvre le lien, aucun envoi séparé nécessaire.</p>
   </div>
 </div>
 
@@ -93,12 +116,49 @@
   });
 
   var generatedLink = '';
+  var photoDataUrl = '';
+
+  document.getElementById('photoInput').addEventListener('change', function (e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    var statusEl = document.getElementById('photoStatus');
+    statusEl.textContent = 'Compression en cours...';
+
+    var reader = new FileReader();
+    reader.onload = function (evt) {
+      var img = new Image();
+      img.onload = function () {
+        var maxWidth = 720;
+        var scale = Math.min(1, maxWidth / img.width);
+        var canvas = document.createElement('canvas');
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        var quality = 0.6;
+        photoDataUrl = canvas.toDataURL('image/jpeg', quality);
+        // Réduit encore si le fichier reste volumineux (lien trop long sinon)
+        while (photoDataUrl.length > 90000 && quality > 0.25) {
+          quality -= 0.1;
+          photoDataUrl = canvas.toDataURL('image/jpeg', quality);
+        }
+
+        document.getElementById('photoPreviewImg').src = photoDataUrl;
+        document.getElementById('photoPreviewWrap').style.display = 'block';
+        var sizeKo = Math.round(photoDataUrl.length / 1024);
+        statusEl.textContent = '✓ Photo prête (' + sizeKo + ' Ko environ)';
+      };
+      img.src = evt.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
   function generate() {
     var client = document.getElementById('client').value.trim();
     var bordereau = document.getElementById('bordereau').value.trim();
     var montant = document.getElementById('montant').value.trim();
     var wave = document.getElementById('wave').value.trim();
-    var photo = document.getElementById('photo').value.trim();
 
     if (!bordereau || !montant) {
       alert('Merci de renseigner au minimum le numéro de bordereau et le montant.');
@@ -111,7 +171,7 @@
     params.set('bordereau', bordereau);
     params.set('montant', montant);
     if (wave) params.set('wave', wave);
-    if (photo) params.set('photo', photo);
+    if (photoDataUrl) params.set('photo', photoDataUrl);
 
     generatedLink = base + '?' + params.toString();
     document.getElementById('linkOut').textContent = generatedLink;
