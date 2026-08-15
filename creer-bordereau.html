@@ -44,10 +44,10 @@
   .note { font-size: 12px; color: var(--stone); margin-top: 10px; line-height: 1.6; }
   .validation-box {
     margin-top: 6px; margin-bottom: 4px; padding: 10px 12px; border-radius: 10px;
-    background: rgba(240, 173, 78, 0.1); border: 1px solid rgba(240, 173, 78, 0.35);
-    color: #f0ad4e; font-size: 12.5px; line-height: 1.5;
+    background: rgba(91, 132, 217, 0.12); border: 1px solid rgba(91, 132, 217, 0.35);
+    color: var(--blue); font-size: 12.5px; line-height: 1.5;
   }
-  .validation-box strong { color: #ffcf7a; }
+  .validation-box strong { color: #a8c0f0; }
 </style>
 </head>
 <body>
@@ -70,7 +70,7 @@
   <label for="photo">Lien de la photo du produit (optionnel)</label>
   <input id="photo" type="url" placeholder="https://...">
 
-  <div class="validation-box">⚠️ Frais de validation obligatoire : <strong>1000 FCFA</strong> — ajoutés automatiquement au montant total.</div>
+  <div class="validation-box">💙 Acompte de validation : <strong>1000 FCFA</strong> — déduit automatiquement du montant, le solde restant est à régler à la livraison.</div>
 
   <button onclick="generate()">Générer le lien du bordereau</button>
 
@@ -97,8 +97,8 @@
     var montant = this.value.trim();
     var waveField = document.getElementById('wave');
     if (montant) {
-      var total = Number(montant) + FRAIS_VALIDATION;
-      waveField.value = 'https://pay.wave.com/m/' + WAVE_MERCHANT_ID + '/c/ci/?amount=' + total;
+      var solde = Number(montant) - FRAIS_VALIDATION;
+      waveField.value = 'https://pay.wave.com/m/' + WAVE_MERCHANT_ID + '/c/ci/?amount=' + solde;
     } else {
       waveField.value = '';
     }
