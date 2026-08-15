@@ -42,6 +42,12 @@
   }
   #copyBtn.copied { border-color: var(--blue); }
   .note { font-size: 12px; color: var(--stone); margin-top: 10px; line-height: 1.6; }
+  .validation-box {
+    margin-top: 6px; margin-bottom: 4px; padding: 10px 12px; border-radius: 10px;
+    background: rgba(240, 173, 78, 0.1); border: 1px solid rgba(240, 173, 78, 0.35);
+    color: #f0ad4e; font-size: 12.5px; line-height: 1.5;
+  }
+  .validation-box strong { color: #ffcf7a; }
 </style>
 </head>
 <body>
@@ -64,6 +70,8 @@
   <label for="photo">Lien de la photo du produit (optionnel)</label>
   <input id="photo" type="url" placeholder="https://...">
 
+  <div class="validation-box">⚠️ Frais de validation obligatoire : <strong>1000 FCFA</strong> — ajoutés automatiquement au montant total.</div>
+
   <button onclick="generate()">Générer le lien du bordereau</button>
 
   <div id="result">
@@ -72,7 +80,7 @@
       <div id="linkOut"></div>
       <button id="copyBtn" onclick="copyLink()">Copier le lien</button>
     </div>
-    <p class="note">Envoyez ce lien au client, accompagné de la photo du produit si vous voulez qu'elle soit visible aussi dans WhatsApp.</p>
+    <p class="note">Envoyez ce lien au client sur WhatsApp — les frais de validation de 1000 FCFA sont automatiquement ajoutés au montant total affiché.</p>
   </div>
 </div>
 
@@ -80,13 +88,17 @@
   // Identifiant fixe de votre compte marchand Wave Business EDELUXE
   var WAVE_MERCHANT_ID = 'M_ci_4Y2x8n5zuKdc';
 
-  // Remplit automatiquement le lien Wave dès que le montant est saisi,
+  // Frais de validation obligatoires, ajoutés systématiquement au montant du produit
+  var FRAIS_VALIDATION = 1000;
+
+  // Remplit automatiquement le lien Wave dès que le montant est saisi (produit + frais de validation),
   // sauf si vous avez déjà collé un lien manuellement
   document.getElementById('montant').addEventListener('input', function () {
     var montant = this.value.trim();
     var waveField = document.getElementById('wave');
     if (montant) {
-      waveField.value = 'https://pay.wave.com/m/' + WAVE_MERCHANT_ID + '/c/ci/?amount=' + montant;
+      var total = Number(montant) + FRAIS_VALIDATION;
+      waveField.value = 'https://pay.wave.com/m/' + WAVE_MERCHANT_ID + '/c/ci/?amount=' + total;
     } else {
       waveField.value = '';
     }
@@ -110,6 +122,7 @@
     if (client) params.set('client', client);
     params.set('bordereau', bordereau);
     params.set('montant', montant);
+    params.set('frais', FRAIS_VALIDATION);
     if (wave) params.set('wave', wave);
     if (photo) params.set('photo', photo);
 
